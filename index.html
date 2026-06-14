@@ -901,6 +901,7 @@
     /* MISC */
     .product-showcase { grid-template-columns: 1fr; }
     .section-title { font-size: clamp(2rem, 10vw, 3rem); }
+    .events-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
   }
 
   /* WHERE WE'RE AT */
@@ -1053,6 +1054,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#events">Private Events</a></li>
     <li><a href="#location" style="color: var(--lime);">📍 Where We're At</a></li>
     <li><a href="#find-us">Find Us</a></li>
   </ul>
@@ -1411,6 +1413,61 @@
   </div>
 </section>
 
+<!-- PRIVATE EVENTS -->
+<section id="events" style="background: var(--black); max-width: none; padding: 6rem 2rem; border-top: 3px solid rgba(195,216,30,0.15);">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <div class="section-label">Book Us</div>
+    <h2 class="section-title">Private <span class="highlight-pink">Events</span></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;" class="reveal events-grid">
+
+      <div>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(245,240,232,0.8); margin-bottom: 1.25rem;">
+          Bring The Sugar Cube to your next event. Birthday parties, graduation parties, team events, festivals — if you've got a crowd, we've got the lemonade.
+        </p>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(245,240,232,0.8); margin-bottom: 2rem;">
+          Menus are <strong style="color: var(--lime);">fully customizable</strong>. Keep it simple with your favorite flavors, or go all out with a completely branded menu built around your event theme — custom drink names, custom colors, the whole thing.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div style="width: 8px; height: 8px; background: var(--pink); flex-shrink: 0; margin-top: 0.4rem;"></div>
+            <span style="font-family: 'Special Elite', cursive; font-size: 0.95rem; color: rgba(245,240,232,0.7); letter-spacing: 0.05em;">Birthday parties &amp; kids events</span>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div style="width: 8px; height: 8px; background: var(--pink); flex-shrink: 0; margin-top: 0.4rem;"></div>
+            <span style="font-family: 'Special Elite', cursive; font-size: 0.95rem; color: rgba(245,240,232,0.7); letter-spacing: 0.05em;">Graduation &amp; milestone celebrations</span>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div style="width: 8px; height: 8px; background: var(--pink); flex-shrink: 0; margin-top: 0.4rem;"></div>
+            <span style="font-family: 'Special Elite', cursive; font-size: 0.95rem; color: rgba(245,240,232,0.7); letter-spacing: 0.05em;">Festivals, markets &amp; community events</span>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div style="width: 8px; height: 8px; background: var(--lime); flex-shrink: 0; margin-top: 0.4rem;"></div>
+            <span style="font-family: 'Special Elite', cursive; font-size: 0.95rem; color: rgba(245,240,232,0.7); letter-spacing: 0.05em;">Fully branded custom menus available</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(236,46,145,0.06); border: 2px solid var(--pink); padding: 1.5rem; margin-bottom: 1.5rem;">
+          <div style="font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 0.1em; color: var(--pink); margin-bottom: 0.5rem;">PRICING</div>
+          <div style="font-family: 'Special Elite', cursive; font-size: 0.9rem; color: rgba(245,240,232,0.6); letter-spacing: 0.05em; line-height: 1.7;">Contact us for a custom quote. Pricing depends on event size, duration, and menu complexity.</div>
+        </div>
+
+        <a href="https://www.facebook.com/profile.php?id=61566257648149" target="_blank" class="btn btn-primary">Message Us to Book ⚡</a>
+      </div>
+
+      <div>
+        <div style="font-family: 'Special Elite', cursive; font-size: 0.75rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.3); text-transform: uppercase; margin-bottom: 0.75rem; text-align: center;">Example Custom Menu</div>
+        <img src="custom-menu.png"
+          alt="Example custom event menu — Jack's 3rd Birthday"
+          style="width: 100%; display: block; border: 2px solid rgba(195,216,30,0.2); filter: saturate(1.05);">
+        <div style="font-family: 'Special Elite', cursive; font-size: 0.78rem; color: rgba(245,240,232,0.25); letter-spacing: 0.1em; text-align: center; margin-top: 0.75rem;">Custom themed menu built for a private birthday event</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">THE <span>SUGAR CUBE</span> LEMONADE</div>
@@ -1419,6 +1476,7 @@
     <a href="#about">About</a>
     <a href="#menu">Menu</a>
     <a href="#reviews">Reviews</a>
+    <a href="#events">Private Events</a>
     <a href="#find-us">Find Us</a>
     <a href="https://www.facebook.com/profile.php?id=61566257648149" target="_blank">Facebook</a>
   </div>
