@@ -8,15 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Bangers&family=Nunito:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
 <meta property="og:title" content="The Sugar Cube Lemonade | Leitchfield, KY">
 <meta property="og:description" content="Fresh squeezed lemonade. Bold flavors. Sweet as rebellion. Find us in Leitchfield, Kentucky.">
-<meta property="og:image" content="https://caseykeown.github.io/sugar-cube-KY/logo-transparent-bg.png">
-<meta property="og:url" content="https://caseykeown.github.io/sugar-cube-KY/">
+<meta property="og:image" content="https://sugarcubeky.netlify.app/logo-transparent-bg.png">
+<meta property="og:url" content="https://sugarcubeky.netlify.app/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://caseykeown.github.io/sugar-cube-KY/logo-transparent-bg.png">
+<meta name="twitter:image" content="https://sugarcubeky.netlify.app/logo-transparent-bg.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
   :root {
     --pink: #ec2e91;
@@ -902,6 +903,134 @@
     .section-title { font-size: clamp(2rem, 10vw, 3rem); }
   }
 
+  /* WHERE WE'RE AT */
+  #location {
+    max-width: none;
+    padding: 6rem 2rem;
+    background: var(--black);
+    border-top: 3px solid rgba(195,216,30,0.2);
+  }
+
+  #location .loc-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .location-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 10px var(--lime);
+    flex-shrink: 0;
+    animation: pulse-dot 2s infinite;
+  }
+
+  .status-dot.closed {
+    background: rgba(245,240,232,0.2);
+    box-shadow: none;
+    animation: none;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .status-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 0.1em;
+    color: var(--lime);
+  }
+
+  .status-label.closed { color: rgba(245,240,232,0.3); }
+
+  .location-message {
+    font-family: 'Special Elite', cursive;
+    font-size: 1rem;
+    color: rgba(245,240,232,0.7);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .location-address {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1.1rem;
+    color: var(--pink);
+    margin-bottom: 1.5rem;
+  }
+
+  #map {
+    width: 100%;
+    height: 420px;
+    border: 2px solid var(--pink);
+    position: relative;
+    z-index: 1;
+  }
+
+  .closed-screen {
+    width: 100%;
+    height: 420px;
+    border: 2px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.02);
+    gap: 1rem;
+  }
+
+  .closed-screen .closed-icon {
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+  }
+
+  .closed-screen .closed-title {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,240,232,0.2);
+  }
+
+  .closed-screen .closed-sub {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.9rem;
+    color: rgba(245,240,232,0.15);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .directions-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 1.5rem;
+    background: var(--lime);
+    color: var(--black);
+    text-decoration: none;
+    box-shadow: 4px 4px 0 var(--pink);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .directions-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--pink);
+  }
+
   /* SCROLL REVEAL */
   .reveal {
     opacity: 0;
@@ -924,6 +1053,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#location" style="color: var(--lime);">📍 Where We're At</a></li>
     <li><a href="#find-us">Find Us</a></li>
   </ul>
 </nav>
@@ -1115,22 +1245,20 @@
           <div class="menu-card-badge" style="background: var(--lime); margin-top: 0.75rem;">The Boss Move</div>
         </div>
         <div style="overflow: hidden; border: 2px solid var(--pink); flex-shrink: 0;">
-  <img src="drink-182-cup.PNG" alt="Drink-182" style="width: 100%; height: 240px; object-fit: contain; object-position: center center; background: transparent; display: block;">
-</div>
-</div>
+          <img src="drink-182-cup.png" alt="Drink-182" style="width: 100%; height: 200px; object-fit: cover; object-position: center 40%; display: block; filter: saturate(1.1);">
+        </div>
+      </div>
 
-<!-- Sour Riot - new item with photo -->
-<div class="menu-card" style="border-color: #00c2e0; background: rgba(0,194,224,0.06); grid-column: span 2; display: grid; grid-template-columns: 1fr 200px; gap: 1.5rem; align-items: center;">
-  <div>
-    <div class="price-tag" style="color: #00c2e0; position: static; font-size: 2.5rem; margin-bottom: 0.25rem;">$8</div>
-    <div class="menu-card-name" style="font-size: 2.4rem;">Sour Riot</div>
-    <div class="menu-card-desc" style="font-size: 1rem;">Tastes like a blue Sour Patch Kid. Topped with blue cotton candy and blue Sour Patch Kids candies. Equal parts refreshing and unhinged.</div>
-    <div class="menu-card-badge" style="background: #00c2e0; color: #090405; margin-top: 0.75rem;">New Drop ⚡</div>
-  </div>
-  <div style="overflow: hidden; border: 2px solid #00c2e0; flex-shrink: 0;">
-    <img src="sour-riot-cup.PNG" alt="Sour Riot Lemonade" style="width: 100%; height: 240px; object-fit: contain; object-position: center center; background: transparent; filter: saturate(1.15); display: block;">
-  </div>
-</div>
+      <!-- Sour Riot - new item with photo -->
+      <div class="menu-card" style="border-color: #00c2e0; background: rgba(0,194,224,0.06); grid-column: span 2; display: grid; grid-template-columns: 1fr 200px; gap: 1.5rem; align-items: center;">
+        <div>
+          <div class="price-tag" style="color: #00c2e0; position: static; font-size: 2.5rem; margin-bottom: 0.25rem;">$8</div>
+          <div class="menu-card-name" style="font-size: 2.4rem;">Sour Riot</div>
+          <div class="menu-card-desc" style="font-size: 1rem;">Tastes like a blue Sour Patch Kid. Topped with blue cotton candy and blue Sour Patch Kids candies. Equal parts refreshing and unhinged.</div>
+          <div class="menu-card-badge" style="background: #00c2e0; color: #090405; margin-top: 0.75rem;">New Drop ⚡</div>
+        </div>
+        <div style="overflow: hidden; border: 2px solid #00c2e0; flex-shrink: 0;">
+          <img src="sour-riot-cup.png" alt="Sour Riot Lemonade" style="width: 100%; height: 200px; object-fit: cover; object-position: center 40%; display: block; filter: saturate(1.15);">
         </div>
       </div>
 
@@ -1203,6 +1331,32 @@
   </div>
 </section>
 
+<!-- WHERE WE'RE AT TODAY -->
+<section id="location">
+  <div class="loc-inner">
+    <div class="section-label">Live Location</div>
+    <h2 class="section-title">Where We're <span class="highlight-pink">At Today</span></h2>
+
+    <div class="location-status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-label" id="statusLabel">Checking...</div>
+    </div>
+
+    <div class="location-message" id="locationMessage"></div>
+    <div class="location-address" id="locationAddress"></div>
+    <a class="directions-btn" id="directionsBtn" href="#" target="_blank" style="display:none;">Get Directions ⚡</a>
+
+    <div style="margin-top: 1.5rem;">
+      <div id="map" style="display:none;"></div>
+      <div class="closed-screen" id="closedScreen" style="display:none;">
+        <div class="closed-icon">🍋</div>
+        <div class="closed-title">We're Closed Today</div>
+        <div class="closed-sub">Follow us on Facebook for updates</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FIND US -->
 <section id="find-us" style="background: var(--dark-gray); max-width: none; padding: 6rem 2rem; border-top: 3px solid rgba(236,46,145,0.15);">
   <div style="max-width: 1100px; margin: 0 auto;">
@@ -1265,6 +1419,91 @@
   <div class="footer-copy">&copy; 2026 Casey Keown. All Rights Reserved.</div>
   <div class="footer-legal">This website and all associated content, source code, and intellectual property are owned by Casey Keown. Unauthorized reproduction, distribution, or use of any materials contained on this website is prohibited without prior written consent. For web-dev info contact <a href="mailto:caseykeown@gmail.com">caseykeown@gmail.com</a></div>
 </footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/1dDjkHUIWqGgsJKFA5VPrzO5xIOtUt4Bm4Pha3bRc0yA/pub?gid=0&single=true&output=csv&cachebust=' + Date.now();
+
+  async function loadLocation() {
+    const dot = document.getElementById('statusDot');
+    const label = document.getElementById('statusLabel');
+    const msg = document.getElementById('locationMessage');
+    const addr = document.getElementById('locationAddress');
+    const mapDiv = document.getElementById('map');
+    const closedDiv = document.getElementById('closedScreen');
+    const dirBtn = document.getElementById('directionsBtn');
+
+    try {
+      const res = await fetch(CSV_URL);
+      const text = await res.text();
+      const rows = text.trim().split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
+      // rows[0] = headers, rows[1] = values
+      const status = (rows[1]?.[0] || '').toLowerCase();
+      const address = rows[1]?.[1] || '';
+      const message = rows[1]?.[2] || '';
+
+      if (status === 'open' && address) {
+        dot.classList.remove('closed');
+        label.textContent = "We're Open!";
+        label.classList.remove('closed');
+        msg.textContent = message || "Come find us today!";
+        addr.textContent = address;
+        dirBtn.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+        dirBtn.style.display = 'inline-block';
+        mapDiv.style.display = 'block';
+
+        // Geocode address using Nominatim (free, no key needed)
+        const geoRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address));
+        const geoData = await geoRes.json();
+
+        if (geoData.length > 0) {
+          const lat = parseFloat(geoData[0].lat);
+          const lon = parseFloat(geoData[0].lon);
+
+          const map = L.map('map', { zoomControl: true }).setView([lat, lon], 16);
+
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 19
+          }).addTo(map);
+
+          // Custom trailer marker
+          const trailerIcon = L.icon({
+            iconUrl: 'new-trailer.png',
+            iconSize: [60, 60],
+            iconAnchor: [30, 60],
+            popupAnchor: [0, -65]
+          });
+
+          L.marker([lat, lon], { icon: trailerIcon })
+            .addTo(map)
+            .bindPopup('<strong style="font-family:sans-serif;color:#090405;">The Sugar Cube</strong><br><span style="font-size:0.85rem;color:#333;">' + address + '</span>')
+            .openPopup();
+        } else {
+          // Geocode failed — show address only, no map
+          mapDiv.style.display = 'none';
+          msg.textContent = (message || '') + ' — See address above for directions.';
+        }
+
+      } else {
+        // Closed
+        dot.classList.add('closed');
+        label.textContent = "Closed Today";
+        label.classList.add('closed');
+        msg.textContent = message || "We're not out today. Follow us on Facebook for the next pop-up.";
+        addr.textContent = '';
+        closedDiv.style.display = 'flex';
+      }
+
+    } catch (e) {
+      label.textContent = "Location unavailable";
+      dot.classList.add('closed');
+      closedDiv.style.display = 'flex';
+    }
+  }
+
+  loadLocation();
+</script>
 
 <script>
   // Scroll reveal
