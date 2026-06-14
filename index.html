@@ -1458,7 +1458,7 @@
 
       <div>
         <div style="font-family: 'Special Elite', cursive; font-size: 0.75rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.3); text-transform: uppercase; margin-bottom: 0.75rem; text-align: center;">Example Custom Menu</div>
-        <img src="custom-menu.png"
+        <img src="custom-menu.jpg"
           alt="Example custom event menu — Jack's 3rd Birthday"
           style="width: 100%; display: block; border: 2px solid rgba(195,216,30,0.2); filter: saturate(1.05);">
         <div style="font-family: 'Special Elite', cursive; font-size: 0.78rem; color: rgba(245,240,232,0.25); letter-spacing: 0.1em; text-align: center; margin-top: 0.75rem;">Custom themed menu built for a private birthday event</div>
@@ -1546,14 +1546,16 @@
         addr.textContent = address;
         dirBtn.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
         dirBtn.style.display = 'inline-block';
-        mapDiv.style.display = 'block';
 
-        const geoRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address));
+        const geoRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address), {
+          headers: { 'Accept-Language': 'en' }
+        });
         const geoData = await geoRes.json();
 
         if (geoData.length > 0) {
           const lat = parseFloat(geoData[0].lat);
           const lon = parseFloat(geoData[0].lon);
+          mapDiv.style.display = 'block';
 
           const map = L.map('map', { zoomControl: true }).setView([lat, lon], 16);
 
@@ -1569,13 +1571,18 @@
             popupAnchor: [0, -65]
           });
 
-          L.marker([lat, lon], { icon: trailerIcon })
-            .addTo(map)
-            .bindPopup('<strong style="font-family:sans-serif;color:#090405;">The Sugar Cube</strong><br><span style="font-size:0.85rem;color:#333;">' + address + '</span>')
-            .openPopup();
+          // Fallback to default pin if trailer image fails
+          const marker = L.marker([lat, lon], { icon: trailerIcon }).addTo(map);
+          marker.on('error', function() {
+            L.marker([lat, lon]).addTo(map)
+              .bindPopup('<strong style="color:#090405;">The Sugar Cube</strong><br><span style="font-size:0.85rem;color:#333;">' + address + '</span>')
+              .openPopup();
+          });
+          marker.bindPopup('<strong style="font-family:sans-serif;color:#090405;">The Sugar Cube</strong><br><span style="font-size:0.85rem;color:#333;">' + address + '</span>').openPopup();
+
         } else {
+          // Geocode failed — hide map, directions button still works
           mapDiv.style.display = 'none';
-          msg.textContent = (message || '') + ' — See address above for directions.';
         }
 
       } else {
