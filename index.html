@@ -1079,6 +1079,12 @@
 
     <p class="hero-location">Mobile Lemonade Stand &nbsp;|&nbsp; <span>Leitchfield, KY</span></p>
 
+    <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; flex-wrap: wrap;">
+      <div class="status-dot" id="heroStatusDot" style="width:10px; height:10px;"></div>
+      <span id="heroStatusText" style="font-family:'Special Elite',cursive; font-size:0.9rem; letter-spacing:0.1em; color:rgba(245,240,232,0.7);">Checking location...</span>
+      <a href="#location" id="heroLocationLink" style="font-family:'Permanent Marker',cursive; font-size:0.85rem; color:var(--pink); text-decoration:none; display:none;">See on map ↓</a>
+    </div>
+
     <div class="hero-cta">
       <a href="#menu" class="btn btn-primary">See the Menu</a>
       <a href="https://www.facebook.com/profile.php?id=61566257648149" target="_blank" class="btn btn-secondary">Find Us on Facebook</a>
@@ -1422,7 +1428,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/1dDjkHUIWqGgsJKFA5VPrzO5xIOtUt4Bm4Pha3bRc0yA/pub?gid=0&single=true&output=csv&cachebust=' + Date.now();
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbnBkd6GVc9Q58fvFqaxgV27CESwJ3tJ6mgGhWzF_jSBH1OzLwLu9R24gum-B9xtWCjrl6sqPHF_Gi/pub?gid=0&single=true&output=csv&cachebust=' + Date.now();
 
   async function loadLocation() {
     const dot = document.getElementById('statusDot');
@@ -1433,16 +1439,26 @@
     const closedDiv = document.getElementById('closedScreen');
     const dirBtn = document.getElementById('directionsBtn');
 
+    const heroDot = document.getElementById('heroStatusDot');
+    const heroText = document.getElementById('heroStatusText');
+    const heroLink = document.getElementById('heroLocationLink');
+
     try {
       const res = await fetch(CSV_URL);
       const text = await res.text();
       const rows = text.trim().split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-      // rows[0] = headers, rows[1] = values
       const status = (rows[1]?.[0] || '').toLowerCase();
       const address = rows[1]?.[1] || '';
       const message = rows[1]?.[2] || '';
 
       if (status === 'open' && address) {
+        // Hero indicator
+        heroDot.classList.remove('closed');
+        heroText.textContent = message || 'We\'re open! — ' + address;
+        heroText.style.color = 'var(--lime)';
+        heroLink.style.display = 'inline';
+
+        // Section
         dot.classList.remove('closed');
         label.textContent = "We're Open!";
         label.classList.remove('closed');
@@ -1452,7 +1468,6 @@
         dirBtn.style.display = 'inline-block';
         mapDiv.style.display = 'block';
 
-        // Geocode address using Nominatim (free, no key needed)
         const geoRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address));
         const geoData = await geoRes.json();
 
@@ -1467,7 +1482,6 @@
             maxZoom: 19
           }).addTo(map);
 
-          // Custom trailer marker
           const trailerIcon = L.icon({
             iconUrl: 'new-trailer.png',
             iconSize: [60, 60],
@@ -1480,13 +1494,18 @@
             .bindPopup('<strong style="font-family:sans-serif;color:#090405;">The Sugar Cube</strong><br><span style="font-size:0.85rem;color:#333;">' + address + '</span>')
             .openPopup();
         } else {
-          // Geocode failed — show address only, no map
           mapDiv.style.display = 'none';
           msg.textContent = (message || '') + ' — See address above for directions.';
         }
 
       } else {
-        // Closed
+        // Hero indicator — closed
+        heroDot.classList.add('closed');
+        heroText.textContent = 'Closed today — follow us on Facebook for updates';
+        heroText.style.color = 'rgba(245,240,232,0.4)';
+        heroLink.style.display = 'none';
+
+        // Section
         dot.classList.add('closed');
         label.textContent = "Closed Today";
         label.classList.add('closed');
@@ -1496,6 +1515,7 @@
       }
 
     } catch (e) {
+      heroText.textContent = 'Location unavailable';
       label.textContent = "Location unavailable";
       dot.classList.add('closed');
       closedDiv.style.display = 'flex';
